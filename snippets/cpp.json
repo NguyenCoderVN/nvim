@@ -1,0 +1,29 @@
+{
+  "Competitive Programming Template N": {
+    "prefix": "cpp_st",
+    "body": [
+      "#include <bits/stdc++.h>",
+      "",
+      "using namespace std;",
+      "",
+      "int main() {",
+      "  ios_base::sync_with_stdio(false);",
+      "  cin.tie(NULL);",
+      "\t",
+      "  int N;",
+      "  cin >> N;",
+      "  ",
+      "  ",
+      "  return 0;",
+      "}"
+    ],
+    "description": "Template C++ với biến N và vòng lặp"
+  },
+  "coutend": {
+    "prefix": "cpp_cout",
+    "body": [
+      "std::cout << ${1:message} << std::endl;"
+    ],
+    "description": "Code snippet for printing to std::cout, provided the header is set"
+  }
+}
