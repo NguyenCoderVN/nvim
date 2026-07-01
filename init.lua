@@ -21,6 +21,28 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end
 vim.opt.rtp:prepend(lazypath)
 
+local dir = vim.fn.stdpath("config") .. "/snippets"
+local f = dir .. "/cpp.json"
+vim.fn.mkdir(dir, "p")
+
+local url = "https://raw.githubusercontent.com/NguyenCoderVN/snippets/refs/heads/main/cpp.json?t="
+  .. os.time()
+
+vim.schedule(function()
+  if vim.fn.filereadable(f) == 1 then
+    vim.fn.delete(f)
+  end
+  vim.fn.jobstart({
+    "curl",
+    "-s",
+    "-f",
+    "-H",
+    "Cache-Control: no-cache",
+    "-o",
+    f,
+    url,
+  })
+end)
 require("options")
 require("keymaps")
 

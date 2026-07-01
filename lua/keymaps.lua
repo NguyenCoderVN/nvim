@@ -29,9 +29,14 @@ map("i", "<C-z>", "<C-o>u", { desc = "Undo in insert mode" })
 map("i", "<A-o>", "<C-o>o", { desc = "Insert line below" })
 
 -- Selection
-map("n", "<C-a>", "<Esc>ggVG", { desc = "Select whole file" })
-map("i", "<C-a>", "<Esc>ggVG", { desc = "Select whole file" })
-map("v", "<C-a>", "<Esc>ggVG", { desc = "Select whole file" })
+vim.keymap.set({ "n", "i", "v" }, "<C-a>", function()
+  vim.cmd("stopinsert")
+  vim.schedule(function()
+    local keys =
+      vim.api.nvim_replace_termcodes("<Esc>ggVG", true, false, true)
+    vim.api.nvim_feedkeys(keys, "n", false)
+  end)
+end, { noremap = true, silent = true, desc = "Select All (Safe Mode)" })
 map({ "i", "n", "v" }, "<A-v>", "<Esc>V", { desc = "Select 1line" })
 
 -- Copy

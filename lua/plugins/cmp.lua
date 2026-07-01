@@ -22,34 +22,8 @@ return {
     local luasnip = require("luasnip")
     local win_opts = { border = "rounded" }
 
-    local snippet_dir = vim.fn.stdpath("config") .. "/snippets"
-    local cpp_file = snippet_dir .. "/cpp.json"
-    vim.fn.mkdir(snippet_dir, "p")
-
-    local cdn_url =
-      "https://raw.githubusercontent.com/NguyenCoderVN/snippets/refs/heads/main/cpp.json"
-
-    -- 1. Kiểm tra và xóa file cũ (Xóa đồng bộ, xong mới đi tiếp)
-    if vim.fn.filereadable(cpp_file) == 1 then
-      vim.fn.delete(cpp_file)
-    end
-
-    -- 2. Kích hoạt tiến trình tải file mới
-    vim.fn.jobstart({ "curl", "-s", "-f", "-o", cpp_file, cdn_url }, {
-      on_exit = function(_, exit_code)
-        if exit_code == 0 then
-          -- 3. Chỉ nạp (lazy_load) khi curl tải file thành công
-          require("luasnip.loaders.from_vscode").lazy_load({
-            paths = { snippet_dir },
-          })
-        else
-          -- Tùy chọn: Báo lỗi nếu quá trình tải thất bại
-          vim.notify(
-            "Lỗi tải snippet C++ từ GitHub!",
-            vim.log.levels.ERROR
-          )
-        end
-      end,
+    require("luasnip.loaders.from_vscode").lazy_load({
+      paths = { vim.fn.stdpath("config") .. "/snippets" },
     })
     require("luasnip.loaders.from_vscode").lazy_load()
 
