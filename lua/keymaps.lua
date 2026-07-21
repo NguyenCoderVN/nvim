@@ -29,29 +29,35 @@ map("i", "<C-z>", "<C-o>u", { desc = "Undo in insert mode" })
 map("i", "<A-o>", "<C-o>o", { desc = "Insert line below" })
 
 -- Selection
-vim.keymap.set({ "n", "i", "v" }, "<C-a>", function()
-  vim.cmd("stopinsert")
-  vim.schedule(function()
-    local keys =
-      vim.api.nvim_replace_termcodes("<Esc>ggVG", true, false, true)
-    vim.api.nvim_feedkeys(keys, "n", false)
-  end)
-end, { noremap = true, silent = true, desc = "Select All (Safe Mode)" })
+map("n", "<C-a>", "ggVG")
+map({ "v", "s" }, "<C-a>", "<Esc>ggVG")
+map("i", "<C-a>", "<Esc>ggVG")
 map({ "i", "n", "v" }, "<A-v>", "<Esc>V", { desc = "Select 1line" })
 
 -- Copy
 map("v", "<C-c>", '"+y<Esc>', { desc = "Copy reg+" })
 map("n", "<C-c>", '"+yy', { desc = "Copy 1line to reg+" })
-map("i", "<C-c>", '<C-o>"+yy', { desc = "Copy 1line to reg+" })
 map("n", "<C-y>", "yy", { desc = "Yank 1line" })
 map("v", "<C-y>", "<Esc>yy", { desc = "Yank 1line" })
 map("i", "<C-y>", "<Esc>yyi", { desc = "Yank 1line" })
+-- Nhấn <leader>cf để copy chỉ tên file (Ví dụ: "main.cpp")
+map("n", "<leader>cf", function()
+  local filename = vim.fn.expand("%:t")
+  vim.fn.setreg("+", filename)
+  print("Copied filename: " .. filename)
+end, { desc = "Copy current filename to clipboard" })
+
+map("n", "<leader>cp", function()
+  local filepath = vim.fn.expand("%:p")
+  vim.fn.setreg("+", filepath)
+  print("Copied full path: " .. filepath)
+end, { desc = "Copy current filepath to clipboard" })
 
 -- Paste from yank A-p
 -- Paste from system Shift Insert
-map("n", "<A-d>", '"1p', { desc = "Paste delete reg1" })
-map("v", "<A-d>", '"1p', { desc = "Paste delete reg1" })
-map("i", "<A-d>", "<C-r>1", { desc = "Paste delete reg1" })
+-- map("n", "<A-d>", '"1p', { desc = "Paste delete reg1" })
+-- map("v", "<A-d>", '"1p', { desc = "Paste delete reg1" })
+-- map("i", "<A-d>", "<C-r>1", { desc = "Paste delete reg1" })
 
 -- Delete
 map("i", "<C-d>", "<C-[>ddI", { desc = "Delete one line" })

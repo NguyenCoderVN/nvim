@@ -9,17 +9,15 @@ return {
     image = {
       force = true,
       doc = {
-        enabled = true,
         inline = true,
         float = false,
       },
     },
-    dashboard = { enabled = true },
-    indent = { enabled = true },
-    input = { enabled = true },
+    dashboard = {},
+    indent = {},
+    input = {},
     notifier = {
-      enabled = true,
-      timeout = 3000,
+      timeout = 5000,
     },
     picker = {
       enabled = true,
@@ -55,7 +53,22 @@ return {
         explorer = {
           layout = {
             layout = {
-              width = 0.25,
+              position = "left",
+              width = 0.40,
+              box = "vertical",
+              {
+                win = "input",
+                height = 1,
+                border = "bottom",
+              },
+              {
+                win = "list",
+              },
+              {
+                win = "preview",
+                height = 0.75,
+                border = "top",
+              },
             },
           },
         },
@@ -97,14 +110,25 @@ return {
     { "<leader>,", function() Snacks.picker.buffers() end, desc = "Buffers" },
     { "<leader>/", function() Snacks.picker.grep() end, desc = "Grep" },
     { "<leader>:", function() Snacks.picker.command_history() end, desc = "Command History" },
-    { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History" },
-    { "<leader>e", function() Snacks.explorer() end, desc = "File Explorer" },
+--    { "<leader>n", function() Snacks.picker.notifications() end, desc = "Notification History" },
+    { "<leader>e", function() Snacks.picker.explorer() end, desc = "Notification History" },
+    { 
+      "<leader>ee", 
+      function() 
+        Snacks.picker.explorer({ cwd = "/home/nguyenmanhtriet/learn-cpp/nmt-baitap" })
+      end, 
+      desc = "Projects" },
     -- find
     { "<leader>fb", function() Snacks.picker.buffers() end, desc = "Buffers" },
     { "<leader>fc", function() Snacks.picker.files({ cwd = vim.fn.stdpath("config") }) end, desc = "Find Config File" },
     { "<leader>ff", function() Snacks.picker.files() end, desc = "Find Files" },
     { "<leader>fg", function() Snacks.picker.git_files() end, desc = "Find Git Files" },
-    { "<leader>fp", function() Snacks.picker.projects() end, desc = "Projects" },
+    { 
+      "<leader>fp", 
+      function() 
+        Snacks.picker.files({ cwd = "/home/nguyenmanhtriet/learn-cpp/nmt-baitap" })
+      end, 
+      desc = "Projects" },
     { "<leader>fr", function() Snacks.picker.recent() end, desc = "Recent" },
     -- buffer
     { "<leader>bd", function() Snacks.bufdelete() end, desc = "Snacks: Delete current buffer" },
@@ -150,6 +174,13 @@ return {
     { "<leader>su", function() Snacks.picker.undo() end, desc = "Undo History" },
     { "<leader>uC", function() Snacks.picker.colorschemes() end, desc = "Colorschemes" },
     -- LSP
+    {
+    "K",
+    function()
+      vim.lsp.buf.hover()
+    end,
+    desc = "LSP Hover Documentation",
+  },
     { "gd", function() Snacks.picker.lsp_definitions() end, desc = "Goto Definition" },
     { "gD", function() Snacks.picker.lsp_declarations() end, desc = "Goto Declaration" },
     -- { "gr", function() Snacks.picker.lsp_references() end, nowait = true, desc = "References" },
@@ -164,7 +195,7 @@ return {
     { "<leader>Z",  function() Snacks.zen.zoom() end, desc = "Toggle Zoom" },
     { "<leader>.",  function() Snacks.scratch() end, desc = "Toggle Scratch Buffer" },
     { "<leader>S",  function() Snacks.scratch.select() end, desc = "Select Scratch Buffer" },
-    { "<leader>n",  function() Snacks.notifier.show_history() end, desc = "Notification History" },
+    -- { "<leader>n",  function() Snacks.notifier.show_history() end, desc = "Notification History" },
     { "<leader>bd", function() Snacks.bufdelete() end, desc = "Delete Buffer" },
     { "<leader>cR", function() Snacks.rename.rename_file() end, desc = "Rename File" },
     { "<leader>gB", function() Snacks.gitbrowse() end, desc = "Git Browse", mode = { "n", "v" } },

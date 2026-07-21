@@ -9,6 +9,8 @@ return {
       sh = { "shfmt" },
       bash = { "shfmt" },
       markdown = { "prettier" },
+      -- Thêm 'injected' để conform xử lý code nhúng trong Norg/Markdown
+      norg = { "injected" },
     },
     formatters = {
       ["clang-format"] = {

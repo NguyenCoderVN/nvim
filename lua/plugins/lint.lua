@@ -6,7 +6,11 @@ return {
 
     lint.linters_by_ft = {
       markdown = { "markdownlint" },
+      cpp = { "cppcheck" },
     }
+
+    local cppcheck = lint.linters.cppcheck
+    table.insert(cppcheck.args, "--suppress=missingIncludeSystem")
 
     local lint_augroup =
       vim.api.nvim_create_augroup("lint", { clear = true })
@@ -19,8 +23,12 @@ return {
         end,
       }
     )
+    vim.keymap.set("n", "K", function()
+      vim.lsp.buf.hover({
+        border = "rounded",
+      })
+    end, { desc = "LSP Hover Documentation" })
 
-    -- Keymap xem lỗi (Sử dụng lệnh mặc định của Neovim)
     vim.keymap.set("n", "<leader>ll", function()
       vim.diagnostic.open_float(nil, {
         scope = "line",

@@ -1,0 +1,11 @@
+; while (...) { ... }
+
+(while_statement
+  body: (compound_statement
+    "{" @brace.while
+    "}" @brace.while))
+
+(if_statement
+  consequence: (compound_statement
+    "{" @brace.if
+    "}" @brace.if))

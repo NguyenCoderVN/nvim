@@ -1,37 +1,142 @@
 {
-  "Competitive Programming Template N": {
-    "prefix": "cpp_st",
+  "Competitive Programming Main Array": {
+    "prefix": "1int",
     "body": [
       "#include <bits/stdc++.h>",
       "",
       "using namespace std;",
+      "const long long mod = 1000000007;",
       "",
       "int main() {",
+      "\tint n;",
+      "\tcin >> n;",
+      "\tint a[n];",
+      "",
+      "\tfor (int i = 0; i < n; i++) {",
+      "\t\tcin >> a[i];",
+      "\t}",
+      "",
+      "\tfor (int i = 0; i < n; i++) {",
+      "\t\t",
+      "\t}",
+      "",
+      "\treturn 0;",
+      "}"
+    ],
+    "description": "Khung code C++ nhập mảng"
+  },
+  "Competitive Programming Template N": {
+    "prefix": "cpp_st",
+    "body": [
+      "#include <bits/stdc++.h>",
+      "using namespace std;",
+      "",
+      "/** @brief  */",
+      "int main() {",
+      "  ios_base::sync_with_stdio(false);",
+      "  cin.tie(NULL);",
       "  int n;",
       "  cin >> n;",
       "  ",
-      "  long long ans = 2$1;",
-      "  cout << ans << endl;",
+      "  $1",
       "  ",
       "  return 0;",
       "}"
     ],
     "description": "Template C++"
   },
+  "cout_end": {
+    "prefix": "endl",
+    "body": [
+      "cout << endl;"
+    ],
+    "description": "End line"
+  },
   "coutend": {
     "prefix": "cpp_cout",
     "body": [
-      "std::cout << ${1:message} << std::endl;"
+      "cout << ${1:message} << endl;"
     ],
     "description": "Code snippet for printing to std::cout, provided the header is set"
   },
   "For Loop (Start at 1)": {
-    "prefix": "for1",
+    "prefix": "foradd",
     "body": [
       "for (int ${1:i} = 1; ${1:i} <= ${2:n}; ${1:i}++) {",
       "\t$0",
       "}"
     ],
-    "description": "Vòng lặp for bắt đầu từ 1 đến n-1"
+    "description": "Vòng lặp for bắt đầu từ 1 đến n"
+  },
+  "For Loop (Reverse)": {
+    "prefix": "forsub",
+    "body": [
+      "for (int ${1:i} = ${2:n}; ${1:i} >= 1; ${1:i}--) {",
+      "\t$0",
+      "}"
+    ],
+    "description": "Vòng lặp for giảm dần từ n về 1"
+  },
+  "Check Prime": {
+    "prefix": "f_isprime",
+    "body": [
+      "bool isPrime(int n) {",
+      "\tfor (int i = 2; i * i <= n; i++)",
+      "\t\tif (n % i == 0)",
+      "\t\t\treturn false;",
+      "",
+      "\treturn n >= 2;",
+      "}"
+    ],
+    "description": "Hàm kiểm tra số nguyên tố (O(sqrt(N)))"
+  },
+  "Check Prime Digits": {
+    "prefix": "f_isprimedigit",
+    "body": [
+      "bool isPrimeDigit(int n) {",
+      "\tfor (; n; n /= 10)",
+      "\t\tif (!isPrime(n % 10))",
+      "\t\t\treturn false;",
+      "",
+      "\treturn true;",
+      "}"
+    ],
+    "description": "Hàm kiểm tra tất cả các chữ số có phải là số nguyên tố"
+  },
+  "Check Total Prime Digits": {
+    "prefix": "f_istotalprimedigit",
+    "body": [
+      "bool isTotalPrimeDigit(int n) {",
+      "\tint s = 0;",
+      "\tfor (; n; n /= 10) {",
+      "\t\tint digit = n % 10;",
+      "\t\ts += digit;",
+      "\t\tif (!isPrime(digit))",
+      "\t\t\treturn false;",
+      "\t}",
+      "",
+      "\treturn isPrime(s);",
+      "}"
+    ],
+    "description": "Hàm kiểm tra các chữ số là số NT và tổng chữ số cũng là số NT"
+  },
+  "GCD Recursive": {
+  "prefix": "f_gcd",
+  "body": [
+    "int gcdRecursive(int a, int b) {",
+    "\ta = std::abs(a);",
+    "\tb = std::abs(b);",
+    "\t",
+    "\treturn (b == 0) ? a : gcdRecursive(b, a % b);",
+    "}"
+  ],
+  "description": "Hàm tìm ước chung lớn nhất (GCD) bằng đệ quy"
+},
+  "Doxygen Brief Comment": {
+    "prefix": "brief",
+    "body": [
+      "/** @brief $1 */"
+    ],
+    "description": "Tạo block chú thích Doxygen ngắn gọn"
   }
 }

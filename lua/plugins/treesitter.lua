@@ -1,10 +1,20 @@
 return {
   "nvim-treesitter/nvim-treesitter",
   build = ":TSUpdate",
+  -- Bật lại lazy-load để tối ưu tốc độ
   event = { "BufReadPost", "BufNewFile", "BufWritePre" },
   opts = {
     highlight = { enable = true },
     indent = { enable = true },
+    ensure_installed = {
+      "lua",
+      "vim",
+      "vimdoc",
+      "bash",
+      "python",
+      "query",
+    },
+    ignore_install = { "norg", "norg_meta" },
   },
   config = function(_, opts)
     require("nvim-treesitter.config").setup(opts)

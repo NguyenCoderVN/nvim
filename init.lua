@@ -23,26 +23,31 @@ vim.opt.rtp:prepend(lazypath)
 
 local dir = vim.fn.stdpath("config") .. "/snippets"
 local f = dir .. "/cpp.json"
-vim.fn.mkdir(dir, "p")
-
-local url = "https://raw.githubusercontent.com/NguyenCoderVN/snippets/refs/heads/main/cpp.json?t="
+local url = "https://raw.githubusercontent.com/NguyenCoderVN/snippets/main/cpp.json?t="
   .. os.time()
 
 vim.schedule(function()
-  if vim.fn.filereadable(f) == 1 then
-    vim.fn.delete(f)
-  end
   vim.fn.jobstart({
     "curl",
     "-s",
     "-f",
     "-H",
-    "Cache-Control: no-cache",
+    "Cache-Control: no-cache, no-store", -- Ép tải mới hoàn toàn
     "-o",
     f,
     url,
+  }, {
+    on_exit = function(_, code)
+      if code == 0 then
+        vim.notify(
+          "Đã cập nhật cpp.json mới nhất!",
+          vim.log.levels.INFO
+        )
+      end
+    end,
   })
 end)
+
 require("options")
 require("keymaps")
 
