@@ -1,107 +1,110 @@
 #!/bin/bash
 
-# 📌 CONFIGURATION & PACKAGE LISTS
+# Exit immediately if a command exits with a non-zero status
+set -e
 
-# APT packages categorized by their use cases
+# STEP 0: CLEANUP BROKEN REPOSITORIES
+echo "🧹 Cleaning up broken third-party repositories..."
+sudo rm -f /etc/apt/sources.list.d/debian.griffo.io.list /etc/apt/trusted.gpg.d/debian.griffo.io.gpg
+
+# STEP 1: INSTALL BASIC UTILITIES
+echo "🛠️ Installing basic tools..."
+sudo apt update -y
+sudo apt install -y curl gpg lsb-release wget tar
+
+# APT PACKAGES LIST
 APT_PACKAGES=(
-  # --- 🛠️ Core Build Tools & Dependencies ---
-  build-essential # GCC/G++ compilers and 'make' (required for compiling packages/plugins)
-  liblua5.1-0-dev # Lua development headers (needed to compile C modules for Neovim/Lua)
+  # System & Environment
+  nodejs npm python3-pip python3-venv
+  build-essential liblua5.1-0-dev
+  lua5.1 luarocks
 
-  # --- 🌙 Lua Ecosystem (Crucial for Neovim) ---
-  lua5.1   # Lua 5.1 runtime (Neovim uses LuaJIT which is 5.1 compatible)
-  luarocks # Package manager for Lua modules
+  # Terminals & CLI Utilities
+  kitty wezterm
+  ffmpeg fzf zoxide jq
+  fd-find ripgrep
 
-  # --- 🚀 Terminal Emulators ---
-  kitty   # Fast, GPU-accelerated terminal emulator
-  wezterm # Cross-platform, GPU-accelerated terminal (configured via Lua)
-
-  # --- 📁 File Manager & Dependencies (Yazi) ---
-  yazi          # Blazing fast terminal file manager with image preview
-  ffmpeg        # Video thumbnails for Yazi
-  poppler-utils # PDF previews for Yazi
-  fzf           # Command-line fuzzy finder
-  zoxide        # Smarter cd command
-  jq            # JSON processor
-
-  # --- 🔍 CLI Utilities (Used heavily by Neovim plugins like Telescope) ---
-  fd-find # Extremely fast alternative to 'find' for file searching
-  ripgrep # Extremely fast text search tool (grep alternative)
-
-  # --- 🖼️ Media & Document Processing ---
-  imagemagick        # Image manipulation tool (often used for terminal image previews)
-  libmagickwand-dev  # ImageMagick C API headers (required for the Lua 'magick' rock)
-  texlive-latex-base # Base LaTeX tools for rendering or compiling math/documents
-
-  # --- 🖥️ System Utilities ---
-  xdg-utils # Desktop integration (allows Neovim/Terminals to open URLs in your browser)
-  xclip     # X11 clipboard interface (Crucial for Neovim clipboard support)
-  x11-apps  # Standard X11 applications (Provides 'xclock')
+  # Media & Display
+  imagemagick libmagickwand-dev texlive-latex-base
+  xdg-utils xclip x11-apps
 )
 
+# NPM PACKAGES LIST
 NPM_PACKAGES=(
-  tree-sitter-cli         # Required for compiling Tree-sitter parsers in Neovim
-  @mermaid-js/mermaid-cli # CLI for generating diagrams from Mermaid code blocks
+  tree-sitter-cli
+  @mermaid-js/mermaid-cli
 )
 
-# 🔑 STEP 1: SETUP REPOSITORIES
+# STEP 2: SETUP WEZTERM REPOSITORY
 echo "🔑 Setting up WezTerm repository..."
 curl -fsSL https://apt.fury.io/wez/gpg.key | sudo gpg --yes --dearmor -o /usr/share/keyrings/wezterm-fury.gpg
 echo 'deb [signed-by=/usr/share/keyrings/wezterm-fury.gpg] https://apt.fury.io/wez/ * *' | sudo tee /etc/apt/sources.list.d/wezterm.list >/dev/null
 sudo chmod 644 /usr/share/keyrings/wezterm-fury.gpg
 
-echo "🔑 Setting up Yazi repository..."
-curl -sS https://debian.griffo.io/EA0F721D231FDD3A0A17B9AC7808B4DD62C41256.asc | sudo gpg --yes --dearmor -o /etc/apt/trusted.gpg.d/debian.griffo.io.gpg
-echo "deb https://debian.griffo.io/apt $(lsb_release -sc 2>/dev/null) main" | sudo tee /etc/apt/sources.list.d/debian.griffo.io.list >/dev/null
-
-# 🗑️ STEP 2: CLEANUP (UNINSTALL EXISTING)
-echo "🗑️ Uninstalling existing packages to ensure a clean slate..."
-sudo apt remove --purge -y "${APT_PACKAGES[@]}"
-sudo apt autoremove -y
-sudo npm uninstall -g "${NPM_PACKAGES[@]}"
-
-# 📦 STEP 3: INSTALL FRESH PACKAGES
-echo "📦 Installing fresh APT packages..."
-sudo apt update
+# STEP 3: INSTALL APT PACKAGES
+echo "📦 Installing APT packages..."
+sudo apt update -y
 sudo apt install -y "${APT_PACKAGES[@]}"
 
-echo "📦 Installing fresh NPM packages..."
+# STEP 4: INSTALL NPM PACKAGES
+echo "📦 Installing NPM packages..."
 sudo npm install -g "${NPM_PACKAGES[@]}"
 
-# 🐍 STEP 4: PYTHON ENVIRONMENT SETUP
-echo "🐍 Installing Python dependencies for Neovim..."
-pip install --upgrade pip
-python3 -m pip install --user pynvim
+# STEP 5: SETUP PYTHON ENVIRONMENT
+echo "🐍 Installing Python dependencies..."
+python3 -m pip install --user --upgrade pip pynvim --break-system-packages 2>/dev/null || python3 -m pip install --user --upgrade pip pynvim
 
-# 🌙 STEP 5: LUA ENVIRONMENT SETUP
-echo "🌙 Installing Lua packages for Neovim..."
+# STEP 6: SETUP LUA ENVIRONMENT
+echo "🌙 Installing Lua packages..."
 luarocks install magick --local
 
-# 🔍 STEP 6: VERIFICATION
-echo "🔍 --- CHECKING INSTALLED VERSIONS --- 🔍"
+# STEP 7: VERIFICATION & VERSION DISPLAY
+echo -e "\n🔍 --- CHECKING INSTALLED VERSIONS ---"
 
-# Check APT Packages
-for pkg in "${APT_PACKAGES[@]}"; do
-  dpkg-query -W -f='🏷️  ${binary:Package}: ${Version}\n' "$pkg" 2>/dev/null || echo "❌ $pkg: Not installed"
-done
+check_cmd() {
+    if command -v "$1" &>/dev/null; then
+        echo -e "🏷️  $1: \033[0;32m$($2 2>&1 | head -n 1)\033[0m"
+    else
+        echo -e "❌ $1: \033[0;31mNot installed\033[0m"
+    fi
+}
 
-# Check NPM Packages
-for pkg in "${NPM_PACKAGES[@]}"; do
-  npm -g list "$pkg" --depth=0 | grep -o "$pkg@.*" | sed 's/^/🏷️  /' || echo "❌ $pkg: Not installed"
-done
+echo -e "\n📦 System & Compilers:"
+check_cmd "node" "node -v"
+check_cmd "npm" "npm -v"
+check_cmd "python3" "python3 --version"
+check_cmd "gcc" "gcc --version"
+check_cmd "lua" "lua -v"
+check_cmd "luarocks" "luarocks --version"
 
-# Check Lua Rocks
-if luarocks list --local | grep -q "magick"; then
-  echo "🏷️  luarocks: magick (installed)"
+echo -e "\n🚀 Terminals & CLI Utilities:"
+check_cmd "kitty" "kitty --version"
+check_cmd "wezterm" "wezterm --version"
+check_cmd "fzf" "fzf --version"
+check_cmd "zoxide" "zoxide --version"
+check_cmd "jq" "jq --version"
+check_cmd "fdfind" "fdfind --version"
+check_cmd "rg" "rg --version"
+check_cmd "ffmpeg" "ffmpeg -version"
+
+echo -e "\n🖼️ Media & Tools:"
+check_cmd "magick" "magick --version"
+check_cmd "xclip" "xclip -version"
+check_cmd "tree-sitter" "tree-sitter --version"
+check_cmd "mmdc" "mmdc --version"
+
+echo -e "\n🐍 Python Packages:"
+if python3 -m pip show pynvim &>/dev/null; then
+    echo -e "🏷️  pynvim: \033[0;32m$(python3 -m pip show pynvim | grep Version | cut -d' ' -f2)\033[0m"
 else
-  echo "❌ luarocks: magick not installed"
+    echo -e "❌ pynvim: \033[0;31mNot installed\033[0m"
 fi
 
-# ✅ FINALIZE
-# Optional Image Tests (Uncomment to use)
-# wezterm imgcat unsplash_image.jpg
-# kitty icat unsplash_image.jpg
-# yazi # Go ahead and try browsing to a folder with pictures!
-# xclock & # Launch xclock in the background to test X11 apps
+echo -e "\n🌙 Lua Rocks:"
+if luarocks list --local 2>/dev/null | grep -q "magick"; then
+    echo -e "🏷️  magick: \033[0;32mInstalled (local)\033[0m"
+else
+    echo -e "❌ magick: \033[0;31mNot installed\033[0m"
+fi
 
-echo "✅ Clean installation complete! 🎉"
+echo -e "\n✅ Complete installation process!"
