@@ -1,10 +1,8 @@
 #!/bin/bash
 
-set -e
-
 cd ~
 mkdir -p ~/.config/nvim/parser
-rm -rf /tmp/tree-sitter-norg /tmp/tree-sitter-norg-meta
+rm -rf /tmp/tree-sitter-norg /tmp/tree-sitter-norg-meta /tmp/tree-sitter-norg-table
 
 git clone --recursive https://github.com/nvim-neorg/tree-sitter-norg /tmp/tree-sitter-norg
 cd /tmp/tree-sitter-norg
@@ -16,5 +14,9 @@ git clone https://github.com/nvim-neorg/tree-sitter-norg-meta /tmp/tree-sitter-n
 cd /tmp/tree-sitter-norg-meta
 gcc -fPIC -Os -shared -I./src src/parser.c -o ~/.config/nvim/parser/norg_meta.so
 
+git clone https://github.com/nvim-neorg/tree-sitter-norg-table /tmp/tree-sitter-norg-table
+cd /tmp/tree-sitter-norg-table
+gcc -fPIC -Os -shared -I./src src/parser.c -o ~/.config/nvim/parser/norg_table.so
+
 cd ~
-rm -rf /tmp/tree-sitter-norg /tmp/tree-sitter-norg-meta
+rm -rf /tmp/tree-sitter-norg /tmp/tree-sitter-norg-meta /tmp/tree-sitter-norg-table
