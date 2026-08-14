@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # CONFIGURATION
-NVIM_VERSION="v0.12.3"
+NVIM_VERSION="v0.12.4"
 DOWNLOAD_URL="https://github.com/neovim/neovim/releases/download/${NVIM_VERSION}/nvim-linux-x86_64.tar.gz"
 TMP_ARCHIVE="/tmp/nvim.tar.gz"
 INSTALL_BASE_DIR="/opt"
